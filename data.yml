@@ -1,0 +1,55 @@
+attributesToRetrieve: 
+  - objectID
+  - backmarketID
+  - link
+  - merchant_link
+  - price
+  - price_with_currency
+  - price_new
+  - price_new_with_currency
+  - warranty
+  - title
+  - title_model
+  - sub_title_elements
+  - sub_title
+  - image1
+  - compatible_carriers
+  - is_sim_locked
+  - list_view
+  - nb_results_starting_from
+  - stockRaw
+  - pressureStockLimit
+  - backbox_grade_label
+  - backbox_grade_value
+  - link_grade_v2
+  - merchant_link_grade_v2
+  - listingID
+
+iphone:
+  facets:
+    - series
+    - model
+    - year_date_release
+    - storage
+    - color
+    - sim_lock_state
+    - compatible_carriers_facet
+    - network
+    - double_sim
+    - connector
+    - backbox_grade
+    - payment_methods
+    - shipping_delay
+    - price_ranges.sm-1
+    - price_ranges.sm-2
+    - price_ranges.md-1
+    - price_ranges.md-1b
+    - price_ranges.md-1c
+    - price_ranges.md-2
+    - price_ranges.lg-1
+    - price_ranges.lg-2
+    - price_ranges.lg-3
+    - price
+
+galaxy:
+  - 

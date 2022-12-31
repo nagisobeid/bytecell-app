@@ -6,12 +6,13 @@ var Multimap = require( 'multimap' );
 const { raw } = require( "express" );
 const client = new Shopify.Clients.Rest( "bytecell.myshopify.com", "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" );
 const response = client.get( { path: 'shop' } );
-const productImagesPath = 'C:/Users/nagis/OneDrive/bytecell/images';
+//const productImagesPath = 'C:/Users/nagis/OneDrive/bytecell/images';
 const axios = require( 'axios' )
 const dataFetch = require( './datafetch' )
 const helpers = require( './helpers' )
 
-async function setInventoryItemToTracked( variantId ) {
+module.exports = {
+  setInventoryItemToTracked : async function ( variantId ) {
     const data = await client.put( {
         path: `inventory_items/${ variantId }`,
         data: {
@@ -23,192 +24,165 @@ async function setInventoryItemToTracked( variantId ) {
       } );
 
       return data.body
-}
+  },
 
-async function updateInventoryItemStock( variantId, invItemId, stock ) {
-    const data = await client.put( {
-        path: `inventory_levels/set.json`,
-        data: {
-            "inventory_level": { 
-                "inventory_item_id": invItemId,
-                "available": stock,
-            }
+  updateInventoryItemStock : async function ( locId, invItemId, stock ) {
+  
+      const data = await client.post( {
+          path: `inventory_levels/set`,
+          data: {
+                  "inventory_item_id" : invItemId,
+                  "location_id" : locId,
+                  "available": stock
           },
-          type: DataType.JSON,
+          type: DataType.JSON
+        } );
+
+        return data.body
+  },
+
+  updateVariantPrice : async function ( variantId, price ) {
+  
+    const data = await client.put( {
+        path: `variants/${variantId}`,
+        data: {
+          "variant" : {
+            "price" : price
+          }
+        },
+        type: DataType.JSON,
       } );
 
-      return data.body
-}
+      return data
+  },
 
-async function getProduct( productId ) {
+  getProduct : async function ( productId ) {
     const data = await client.get( {
         path: `products/${ productId }`,
       } );
       return data.body.product;
-}
+  },
 
-async function getAllProducts() {
+  getLocation : async function ( ) {
     const data = await client.get( {
-      path: 'products',
-    }) ;
-    return data.body.products
-}
+        path: `locations`,
+      } );
+      return data.body.locations;
+  },
 
-const updateProductAssingImagesToVariants = async function( prod ) {
-  const data = await client.put( {
-        path: `products/${ prod.id }`,
+  getVariant : async function ( variantId ) {
+    const data = await client.get( {
+        path: `variants/${ variantId }`,
+      } );
+      return data.body.variant;
+  },
+
+  getInventoryItem : async function ( itemId ) {
+    const data = await client.get( {
+        path: `inventory_items/${ itemId }`,
+      } );
+      return data.body.inventory_item;
+  },
+
+  getAllProducts : async function () {
+    const path = 'products'
+    let allProds = []
+    let query = { limit : 250 }
+
+    while( true ) {
+      let data = await client.get( {
+        path,
+        query
+      }) ;
+
+      allProds = allProds.concat( data.body.products )
+      //return allProds
+      //console.log( data )
+      if ( data.pageInfo.nextPageUrl ) {
+        //console.log( data.pageInfo.nextPage.query )
+        query = data.pageInfo.nextPage.query
+        //continue
+      } else {
+        return allProds
+      }
+    }
+  },
+
+  getAllProductsxx : async function () {
+    const data = await client.get( {
+      path: `products`,
+      query : { limit : 250 }
+    }) ;
+    console.log( data )
+    return data.body.products
+  },
+
+  getProductCount : async function () {
+    const data = await client.get( {
+      path: `products/count`
+    }) ;
+    return data.body
+  },
+
+  updateProductAssingImagesToVariants : async function( prod ) {
+    const data = await client.put( {
+          path: `products/${ prod.id }`,
+          data: {
+              "product": {  
+                  "images"  : [ ...prod.imagesData],
+              }
+          },
+          type: DataType.JSON,
+      } );
+      return data.body.product
+  },
+
+  createProduct : async function( prod ) {
+    try {
+      const data = await client.post({
+        path: 'products',
         data: {
-            "product": {  
-                "images"  : [ ...prod.imagesData],
-            }
+          "product" : {
+            "title"     :   prod.title,
+            "vendor"    :   "bytecell",
+            "tags"      :   prod.title, 
+            "status"    :   "active",
+            "images"    :   [ ...prod.images ],
+            "options"   :   [ ...prod.options ],
+            "variants"  :   [ ...prod.variants ],
+            "handle"    :   prod.title + '-' + prod.UUID,
+            //"handle"    : prod.handle,
+            "body_html" :   prod.body,
+            "metafields_global_title_tag"       : prod.metafield,
+            "metafields_global_description_tag" : prod.metafield
+          }
         },
         type: DataType.JSON,
-    } );
-    return data.body.product
-}
-
-const createProduct = async function( prod ) {
-  try {
-    const data = await client.post({
-      path: 'products',
-      data: {
-        "product" : {
-          "title"     :   prod.title,
-          "vendor"    :   "bytecell",
-          "tags"      :   prod.title, 
-          "status"    :   "active",
-          "images"    :   [ ...prod.images ],
-          "options"   :   [ ...prod.options ],
-          "variants"  :   [ ...prod.variants ],
-          "handle"    :   ( prod.title + '-' + prod.id ),
-          "body_html" :   "",
-          "metafields_global_title_tag"       : prod.metafield,
-          "metafields_global_description_tag" : prod.metafield
-        }
-      },
-      type: DataType.JSON,
-    });
-    //console.log(data.body.prouct);
-    return data.body.product
-    
-  } catch ( error ) {
-    console.log( error )
-    setTimeout(() => {
-      console.log( 'WAITING' )
-    }, 3000 );
-  }
-}
-
-const setVariantToTracked = async function( varId ) {
-    setTimeout( async ()=>{
-        console.log( varId )
-        const data = await client.put({
-            path: `variants/${ varId }`,
-            data: {
-              "variant": { 
-                "inventory_management": "shopify"
-              }
-            },
-            type: DataType.JSON,
-        } );
-        return data.body
-    }, 2500)
-  }
-
-//steps variants will need to be assembled into a single product object for shopify API
- /*dataFetch.getProductVariantsById( 14356 )
-  .then( variants => {
-    helpers.prepareProductVariantsFromDB( variants )
-    .then( productObject => {
-     createProduct( productObject ).then(r => {
-      getAllProducts().then( r => {
-        console.log( r[0].variants )
-      })
-     })
-    })
-  })
-*/
-
-async function begin() {
-  ids = await dataFetch.getAllVariantIds();
-  for ( id = 0; id < ids.length; id++ ) {
-    let variants = await dataFetch.getProductVariantsById( ids[id].bcid )
-    let data = await helpers.prepareProductVariantsFromDB( variants )
-    await createProduct( data )
-    .then( r => { })
-    .catch( err => {
-      console.log( err )
-    });
-  }
-};
-
-async function begin2() {
-  ids = await dataFetch.getAllVariantIds();
-  for ( id = 0; id < 20; id++ ) {
-    let variants = await dataFetch.getProductVariantsById( ids[id].bcid )
-    let data = await helpers.prepareProductVariantsFromDB( variants )
-    await createProduct( data )
-    .then( r => { })
-    .catch( err => {
-      console.log( err )
-    });
-  }
-};
-  
-begin()
-  
-
-/*
-var m = new Multimap();
-for (product of products) {
-  m.set(product.title, product);
-}
-
-m.forEachEntry(function (entry, key) {
-  let r = prepareProduct(m.get(key));
-  createProduct(r).then( p => {
-    let data = {id: p.id}
-      let images = [];
-      r.images.forEach ( i => {
-        let variant_ids = [];
-        r.variants.forEach( v => {
-          if (i.src.toUpperCase().includes(v.title.toUpperCase().substring(0, 3))) {
-            variant_ids.push(v.id);
-          }
-        })
-        images.push({"id": i.id, "variant_ids": variant_ids})
-      })
-      data.imagesData = images;
-      updateProductAssingImagesToVariants(data);
-  });
-});
-*/
-
-
-/*
-getAllProducts().then( async r => {
-    for ( i = 0; i < r.length; i++) {
-        for (j=0; j < r[i].variants.length; j++) {
-            //console.log(r[i].variants[j].id);
-            variants.push(r[i].variants[j].id);
-        }
+      });
+      //console.log(data.body.prouct);
+      return data.body.product
+      
+    } catch ( error ) {
+      console.log( error )
+      setTimeout(() => {
+        console.log( 'WAITING' )
+      }, 3000 );
     }
-    for (variant = 0; variant < variants.length; variant++) {
-        
+  },
+  setVariantToTracked : async function( varId ) {
+      setTimeout( async ()=>{
+          console.log( varId )
+          const data = await client.put({
+              path: `variants/${ varId }`,
+              data: {
+                "variant": { 
+                  "inventory_management": "shopify"
+                }
+              },
+              type: DataType.JSON,
+          } );
+          return data.body
+      }, 2500)
     }
-})
+  }
 
-*/
-
-/*
-getAllProducts().then( async r => {
-    for ( i = 0; i < r.length; i++) {
-        //console.log(r[i])
-        for (j=0; j < r[i].variants.length; j++) {
-            //console.log(j)
-            //console.log(r[i].variants[j].id);
-            await setVariantToTracked(r[i].variants[j].id);
-        }
-    }
-})
-*/

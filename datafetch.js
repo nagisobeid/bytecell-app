@@ -1,61 +1,175 @@
 const dotenv = require('dotenv').config();
 const axios = require( 'axios' )
 
-const HOST = process.env.HOST
-const PORT = process.env.PORT
+const HOST = process.env.BYTECELLAPIHOST
+
+const config = {
+    headers:{
+      'BYTECELLAPIKEY': process.env.BYTE_CELL_API_KEY
+    }
+};
 
 const getAllProducts = async () => {
-    console.log('called')
-    const response = await axios.get( `http://${HOST}:${PORT}/products` )
-    return response.data.data
+    try {
+        const response = await axios.get( `http://${HOST}/products`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
 }
 
-/*
-const getAllVariants = async () => {
-    const response = await axios.get( `http://${HOST}:${PORT}/variants` )
-    return response.data.data
+const getProductByUuid = async ( uuid ) => {
+    try {
+        const response = await axios.get( `http://${HOST}/products/${ uuid }`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
 }
 
-
-const getProductVariantsById = async ( bcid ) => {
-    const response = await axios.get( `http://${HOST}:${PORT}/products/${ bcid }` )
-    return response.data.data
+const getProductsForShopify = async ( uuid ) => {
+    try {
+        const response = await axios.get( `http://${HOST}/products/shopify`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
 }
-*/
 
 //returns object
 const getProduct = async ( uuid, color, condition ) => {
-    const response = await axios.get( `http://${HOST}:${PORT}/products/${ uuid }/${ color }/${ condition }` )
-    return response.data.data[0]
+    try {
+        const response = await axios.get( `http://${HOST}/products/${ uuid }/${ color }/${ condition }`, config )
+        return response.data.data[0]
+    } catch ( err ) {
+        return err.response.data.data
+    }
 }
-/*
-const getAllVariantIds = async () => {
-    const response = await axios.get( `http://${HOST}:${PORT}/variants/ids` )
-    //console.log( response.data.data)
-    return response.data.data
-}
-*/
+
 const getAllProductIds = async () => {
-    const response = await axios.get( `http://${HOST}:${PORT}/products/ids` )
-    //console.log( response.data.data)
-    return response.data.data
+    try {
+        const response = await axios.get( `http://${HOST}/products/ids`, config )
+        //return response
+        return response.data.data
+    }
+    catch ( err ) {
+        //console.log( err )
+        return err.response.data.message
+    }
 }
 
 const getProductsMissingImages = async ( ) => {
-    const response = await axios.get( `http://${HOST}:${PORT}/images/missing` )
-    return response.data.data
+    try {
+        const response = await axios.get( `http://${HOST}/images/missing`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
 }
 
 const getProductImages = async ( uuid ) => {
-    const response = await axios.get( `http://${HOST}:${PORT}/images/${ uuid }` )
-    return response.data.data
+    try {
+        const response = await axios.get( `http://${HOST}/images/${ uuid }`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
+}
+
+const getProductsAndImgCount = async ( ) => {
+    try {
+        const response = await axios.get( `http://${HOST}/images/imgcount`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
 }
 
 const mapImage = async ( payload ) => {
-    const response = await axios.post( `http://${HOST}:${PORT}/images`, payload )
-    //console.log( payload )
+    try {
+        const response = await axios.post( `http://${HOST}/images`, payload, config )
+    } catch ( err ) {
+        return err
+    }
 }
 
+const getReviews = async ( ) => {
+    try {
+        const response = await axios.get( `http://${HOST}/reviews`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
+}
+
+const getProdsMissingReviews = async ( ) => {
+    try {
+        const response = await axios.get( `http://${HOST}/reviews/missing`, config )
+        return response.data.data
+    } catch ( err ) {
+        return err.response.data.data
+    }
+}
+
+const renameReviews = async ( payload ) => {
+    try {
+        const response = await axios.put( `http://${HOST}/reviews/rename`, payload, config )
+        return response
+    } catch ( err ) {
+        return err
+    }
+}
+
+const insertReviews = async ( payload ) => {
+    try {
+        const response = await axios.post( `http://${HOST}/reviews`, payload, config )
+        return response
+    } catch ( err ) {
+        return err
+    }
+}
+
+const updateProdSyncStatus = async ( payload ) => {
+    try {
+        const response = await axios.post( `http://${HOST}/products/syncstatus`, payload, config )
+        return response
+    } catch ( err ) {
+        return err
+    }
+}
+
+const fetchVariantsForSeeding = async () => {
+    try {
+        return await axios.get( `http://${HOST}/products/shopify/variants/seeding`, config )
+    } catch (error) {
+        return error
+    }
+}
+
+const fetchProductsWithPriceChange = async () => {
+    try {
+        const response = await axios.get( `http://${HOST}/products/pricechanged`, config )
+        return response.data
+    } catch (error) {
+        return error
+    }
+}
+
+const insertVariantsForSeeding = async ( payload ) => {
+    try {
+        return await axios.post( `http://${HOST}/products/shopify/variants/seeding`, payload, config )
+    } catch (error) {
+        return error
+    }
+}
+
+const resetPriceChangedFlag = async ( payload ) => {
+    try {
+        return await axios.put( `http://${HOST}/products/resetpricechanged`, payload, config )
+    } catch (error) {
+        return error
+    }
+}
 
 module.exports = {
     getAllProducts,
@@ -63,5 +177,17 @@ module.exports = {
     getAllProductIds,
     mapImage,
     getProductsMissingImages,
-    getProductImages
+    getProductImages,
+    getProductByUuid,
+    getProductsAndImgCount,
+    getProductsForShopify,
+    getReviews,
+    renameReviews,
+    getProdsMissingReviews,
+    insertReviews,
+    updateProdSyncStatus,
+    fetchVariantsForSeeding,
+    insertVariantsForSeeding,
+    fetchProductsWithPriceChange,
+    resetPriceChangedFlag
 }

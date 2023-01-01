@@ -15,6 +15,8 @@ module.exports = {
         let retProds = { IDS : [] }
 
         for( let prod = 0; prod < products.length; prod++ ) {
+	    //wait for 2 seconds, shopify implements a rate limiter
+	    await new Promise(resolve => setTimeout( resolve, 1500 ));
             try {
                 let product = await shpfyVariants.updateVariantPrice( products[prod].SHPFY_ID, products[prod].PRICE )
                 await shpfyInventoryItem.updateInventoryItemStock( locId, product.inventory_item_id, products[prod].STOCK )

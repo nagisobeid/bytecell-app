@@ -1,4 +1,5 @@
 const actionsVariants = require( './actions/variants' )
+const actionsOrders = require( './actions/orders' )
 const helpers = require( './helpers' )
 
 const start = async () => {
@@ -17,4 +18,18 @@ const start = async () => {
     console.log( '*********** TRANSACTION END **************\n' )
 }
 
-start()
+const startTest = async () => {
+    //console.log( '*********** TRANSACTION BEGIN **************' )
+    //console.log( helpers.getDateTime() )
+    //console.log( '\n' )
+    try {
+        await actionsOrders.syncOrders()
+    } catch (error) {
+        console.log( error )
+    }
+    //console.log( '\n' )
+    //console.log( helpers.getDateTime() )
+    //console.log( '*********** TRANSACTION END **************\n' )
+}
+
+startTest()

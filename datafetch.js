@@ -171,6 +171,24 @@ const resetPriceChangedFlag = async ( payload ) => {
     }
 }
 
+const getOrders = async () => {
+    try {
+        const response = await axios.get( `http://${HOST}/orders`, config )
+        return response.data
+    } catch (error) {
+        return error
+    }
+}
+
+const postOrders = async ( payload ) => {
+    try {
+        const response = await axios.post( `http://${HOST}/orders`, payload, config )
+        return response.data
+    } catch (error) {
+        return error
+    }
+}
+
 module.exports = {
     getAllProducts,
     getProduct,
@@ -189,5 +207,7 @@ module.exports = {
     fetchVariantsForSeeding,
     insertVariantsForSeeding,
     fetchProductsWithPriceChange,
-    resetPriceChangedFlag
+    resetPriceChangedFlag,
+    getOrders,
+    postOrders
 }

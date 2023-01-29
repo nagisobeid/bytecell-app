@@ -23,7 +23,7 @@ const startTest = async () => {
     console.log( helpers.getDateTime() )
     console.log( '\n' )
     try {
-        await actionsVariants.updateVariantPrices()
+        let products = await actionsVariants.updateVariantPrices()
         await actionsVariants.resetPriceChanged( { json : JSON.stringify(products) })
         await actionsOrders.syncOrders()
     } catch (error) {

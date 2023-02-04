@@ -7,25 +7,10 @@ const start = async () => {
     console.log( helpers.getDateTime() )
     console.log( '\n' )
     try {
-        const products = await actionsVariants.updateVariantPrices()
-        const response = await actionsVariants.resetPriceChanged( { json : JSON.stringify(products) })
-        console.log( response )
-    } catch (error) {
-        console.log( error )
-    }
-    console.log( '\n' )
-    console.log( helpers.getDateTime() )
-    console.log( '*********** TRANSACTION END **************\n' )
-}
-
-const startTest = async () => {
-    console.log( '*********** TRANSACTION BEGIN **************' )
-    console.log( helpers.getDateTime() )
-    console.log( '\n' )
-    try {
         let products = await actionsVariants.updateVariantPrices()
-        await actionsVariants.resetPriceChanged( { json : JSON.stringify(products) })
+        let reset = await actionsVariants.resetPriceChanged( { json : JSON.stringify(products) })
         await actionsOrders.syncOrders()
+	console.log( 'resetPrices', reset )
     } catch (error) {
         console.log( error )
     }
@@ -34,4 +19,4 @@ const startTest = async () => {
     console.log( '*********** TRANSACTION END **************\n' )
 }
 
-startTest()
+start()

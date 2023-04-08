@@ -10,7 +10,7 @@ const start = async () => {
         let products = await actionsVariants.updateVariantPrices()
         let reset = await actionsVariants.resetPriceChanged( { json : JSON.stringify(products) })
         await actionsOrders.syncOrders()
-	console.log( 'resetPrices', reset )
+	    console.log( 'resetPrices', reset )
     } catch (error) {
         console.log( error )
     }

@@ -19,7 +19,7 @@ module.exports = {
     getAllOrders : async function () {
         const path = 'orders'
         let allOrders = []
-        let query = { limit : 250 }
+        let query = { limit : 250, status : 'any' }
     
         while( true ) {
             let props = {

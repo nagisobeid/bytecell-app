@@ -1,0 +1,22 @@
+#2,30 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py iphone >> /home/ec2-user/code/bytecell-seeding/log
+#10,40 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py galaxy >> /home/ec2-user/code/bytecell-seeding/log
+#20 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py earphones >> /home/ec2-user/code/bytecell-seeding/log
+#50 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py ipad >> /home/ec2-user/code/bytecell-seeding/log
+
+*/10 */1 * * * cd /home/ec2-user/src/bytecell-app/ && sh cron.sh
+1,30 */1 * * * cd /home/ec2-user/code/bytecell-seeding && bash run.sh iphone
+10,40 */1 * * * cd /home/ec2-user/code/bytecell-seeding && bash run.sh galaxy
+20 */1 * * * cd /home/ec2-user/code/bytecell-seeding && bash run.sh earphones
+50 */1 * * * cd /home/ec2-user/code/bytecell-seeding && bash run.sh ipad
+
+#1,30 */1 * * * cd /home/ec2-user/code/bytecell-seeding/dist && ./main iphone >> /home/ec2-user/code/bytecell-seeding/log
+#10,40 */1 * * * cd /home/ec2-user/code/bytecell-seeding/dist && ./main galaxy >> /home/ec2-user/code/bytecell-seeding/log
+#20 */1 * * * cd /home/ec2-user/code/bytecell-seeding/dist && ./main earphones >> /home/ec2-user/code/bytecell-seeding/log
+#50 */1 * * * cd /home/ec2-user/code/bytecell-seeding/dist && ./main ipad >> /home/ec2-user/code/bytecell-seeding/log
+#1 */24 * * * curl --header "BYTECELLAPIKEY: 62443836" localhost:5000/products/force-price-changed
+
+#1,30 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py iphone >> /home/ec2-user/code/bytecell-seeding/log
+#10,40 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py galaxy >> /home/ec2-user/code/bytecell-seeding/log
+#20 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py earphones >> /home/ec2-user/code/bytecell-seeding/log
+#50 */1 * * * /usr/bin/python3 /home/ec2-user/code/bytecell-seeding/main.py ipad >> /home/ec2-user/code/bytecell-seeding/log
+
